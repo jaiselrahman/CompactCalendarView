@@ -1,7 +1,7 @@
 package com.github.sundeepk.compactcalendarview;
 
 import com.github.sundeepk.compactcalendarview.comparators.EventComparator;
-import com.github.sundeepk.compactcalendarview.domain.Event;
+import com.github.sundeepk.compactcalendarview.domain.BaseEvent;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -15,14 +15,14 @@ import java.util.Map;
 public class EventsContainer {
 
     private Map<String, List<Events>> eventsByMonthAndYearMap = new HashMap<>();
-    private Comparator<Event> eventsComparator = new EventComparator();
+    private Comparator<BaseEvent> eventsComparator = new EventComparator();
     private Calendar eventsCalendar;
 
     public EventsContainer(Calendar eventsCalendar) {
         this.eventsCalendar = eventsCalendar;
     }
 
-    void addEvent(Event event) {
+    void addEvent(BaseEvent event) {
         eventsCalendar.setTimeInMillis(event.getTimeInMillis());
         String key = getKeyForCalendarEvent(eventsCalendar);
         List<Events> eventsForMonth = eventsByMonthAndYearMap.get(key);
@@ -31,7 +31,7 @@ public class EventsContainer {
         }
         Events eventsForTargetDay = getEventDayEvent(event.getTimeInMillis());
         if (eventsForTargetDay == null) {
-            List<Event> events = new ArrayList<>();
+            List<BaseEvent> events = new ArrayList<>();
             events.add(event);
             eventsForMonth.add(new Events(event.getTimeInMillis(), events));
         } else {
@@ -44,14 +44,14 @@ public class EventsContainer {
         eventsByMonthAndYearMap.clear();
     }
 
-    void addEvents(List<Event> events) {
+    void addEvents(List<? extends BaseEvent> events) {
         int count = events.size();
         for (int i = 0; i < count; i++) {
             addEvent(events.get(i));
         }
     }
 
-    List<Event> getEventsFor(long epochMillis) {
+    <T extends BaseEvent> List<T> getEventsFor(long epochMillis) {
         Events events = getEventDayEvent(epochMillis);
         if (events == null) {
             return new ArrayList<>();
@@ -64,11 +64,11 @@ public class EventsContainer {
         return eventsByMonthAndYearMap.get(year + "_" + month);
     }
 
-    List<Event> getEventsForMonth(long eventTimeInMillis){
+    <T extends BaseEvent> List<T> getEventsForMonth(long eventTimeInMillis){
         eventsCalendar.setTimeInMillis(eventTimeInMillis);
         String keyForCalendarEvent = getKeyForCalendarEvent(eventsCalendar);
         List<Events> events = eventsByMonthAndYearMap.get(keyForCalendarEvent);
-        List<Event> allEventsForMonth = new ArrayList<>();
+        List<BaseEvent> allEventsForMonth = new ArrayList<>();
         if (events != null) {
             for(Events eve : events){
                 if (eve != null) {
@@ -77,7 +77,8 @@ public class EventsContainer {
             }
         }
         Collections.sort(allEventsForMonth, eventsComparator);
-        return allEventsForMonth;
+        //noinspection unchecked
+        return (List<T>) allEventsForMonth;
     }
 
     private Events getEventDayEvent(long eventTimeInMillis){
@@ -119,7 +120,7 @@ public class EventsContainer {
         }
     }
 
-    void removeEvent(Event event) {
+    void removeEvent(BaseEvent event) {
         eventsCalendar.setTimeInMillis(event.getTimeInMillis());
         String key = getKeyForCalendarEvent(eventsCalendar);
         List<Events> eventsForMonthAndYear = eventsByMonthAndYearMap.get(key);
@@ -143,7 +144,7 @@ public class EventsContainer {
         }
     }
 
-    void removeEvents(List<Event> events) {
+    void removeEvents(List<? extends BaseEvent> events) {
         int count = events.size();
         for (int i = 0; i < count; i++) {
             removeEvent(events.get(i));

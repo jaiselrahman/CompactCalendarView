@@ -2,7 +2,7 @@ package com.github.sundeepk.compactcalendarview.domain;
 
 import androidx.annotation.Nullable;
 
-public class Event {
+public class Event implements BaseEvent {
 
     private int color;
     private long timeInMillis;
@@ -19,10 +19,12 @@ public class Event {
         this.data = data;
     }
 
+    @Override
     public int getColor() {
         return color;
     }
 
+    @Override
     public long getTimeInMillis() {
         return timeInMillis;
     }

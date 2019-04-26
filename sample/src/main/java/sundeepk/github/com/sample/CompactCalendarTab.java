@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
+import com.github.sundeepk.compactcalendarview.domain.BaseEvent;
 import com.github.sundeepk.compactcalendarview.domain.Event;
 
 import java.text.SimpleDateFormat;
@@ -256,7 +257,8 @@ public class CompactCalendarTab extends Fragment {
         currentCalender.set(Calendar.DAY_OF_MONTH, 1);
         currentCalender.set(Calendar.MONTH, Calendar.AUGUST);
         List<String> dates = new ArrayList<>();
-        for (Event e : compactCalendarView.getEventsForMonth(new Date())) {
+        List<Event> events = compactCalendarView.getEventsForMonth(new Date());
+        for (Event e : events) {
             dates.add(dateFormatForDisplaying.format(e.getTimeInMillis()));
         }
         Log.d(TAG, "Events for Aug with simple date formatter: " + dates);

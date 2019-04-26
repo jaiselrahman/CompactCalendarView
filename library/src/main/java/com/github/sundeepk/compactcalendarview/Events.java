@@ -1,15 +1,16 @@
 package com.github.sundeepk.compactcalendarview;
 
+import com.github.sundeepk.compactcalendarview.domain.BaseEvent;
 import com.github.sundeepk.compactcalendarview.domain.Event;
 
 import java.util.List;
 
 class Events {
 
-    private final List<Event> events;
+    private final List<? extends BaseEvent> events;
     private final long timeInMillis;
 
-    Events(long timeInMillis, List<Event> events) {
+    Events(long timeInMillis, List<? extends BaseEvent> events) {
         this.timeInMillis = timeInMillis;
         this.events = events;
     }
@@ -18,8 +19,9 @@ class Events {
         return timeInMillis;
     }
 
-    List<Event> getEvents() {
-        return events;
+    <T extends BaseEvent> List<T> getEvents() {
+        //noinspection unchecked
+        return (List<T>) events;
     }
 
     @Override
